@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 public class SayaMusicTrack
 {
     private int id;
@@ -7,6 +8,9 @@ public class SayaMusicTrack
 
     public SayaMusicTrack(string title)
     {
+        RDebug.Assert(title != null, "Judul tidak boleh null");
+        Debug.Assert(title.Length <= 100, "Judul maksimal 100 karakter");
+
         Random rnd = new Random();
         this.id = rnd.Next(10000, 99999);
         this.title = title;
@@ -15,14 +19,20 @@ public class SayaMusicTrack
 
     public void IncreasePlayCount(int count)
     {
-        this.playCount += count;
-    }
+        
+        Debug.Assert(count <= 10000000, "Input maksimal 10 juta");
 
-    public void PrintTrackDetails()
-    {
-        Console.WriteLine($"ID: {id}");
-        Console.WriteLine($"Title: {title}");
-        Console.WriteLine($"Play Count: {playCount}");
+        try
+        {
+            checked
+            { 
+                this.playCount += count;
+            }
+        }
+        catch (OverflowException)
+        {
+            Console.WriteLine("Error: Play count melebihi batas maksimal!");
+        }
     }
 }
 class Program
